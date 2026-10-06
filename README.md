@@ -100,9 +100,21 @@ Après le merge de `feat/ci`, le ruleset exige que ces deux checks soient **vert
 
 ### Capture de la PR bloquée
 
-Branche `fix/casse-test` : un test volontairement cassé. Le job `test` est rouge, le merge est refusé.
+PR `fix/casse-test` → `main` : le test `/health` a été cassé volontairement (`status == "ko"`).
+
+- `CI / lint` : vert (Required)
+- `CI / test` : rouge (Required) — *Failing after 12s*
+- **Merging is blocked**
+
+![PR bloquée : test rouge, merge refusé](docs/pr-cassee-test.png)
 
 ```
-(à coller la capture GitHub « required status check » / merge bloqué)
+Some checks were not successful
+1 failing, 1 successful checks
+
+× CI / test (pull_request)   Failing after 12s   Required
+✓ CI / lint (pull_request)   Successful in 10s   Required
+
+Merging is blocked
 ```
 
