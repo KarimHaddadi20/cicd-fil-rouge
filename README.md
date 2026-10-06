@@ -1,5 +1,7 @@
 # TaskFlow — dépôt fil rouge CI/CD
 
+[![CI](https://github.com/KarimHaddadi20/cicd-fil-rouge/actions/workflows/ci.yml/badge.svg)](https://github.com/KarimHaddadi20/cicd-fil-rouge/actions/workflows/ci.yml)
+
 TaskFlow est une petite API de gestion de tâches écrite en Python avec FastAPI.
 C'est le projet fil rouge du module CI/CD (Mastère DevOps M1, Sup de Vinci) :
 pendant trois jours, vous allez construire autour d'elle un pipeline complet
@@ -89,14 +91,31 @@ Tentative : `git push origin main` après le ruleset.
 ## Pipeline CI
 
 Le workflow `.github/workflows/ci.yml` s'exécute à chaque pull request (et sur `main`).
-Il lance **deux jobs en parallèle** : aucun n'attend l'autre (`needs` est absent).
 
-| Job | Commande | Ce qu'il vérifie |
+| Job | Rôle |
+| --- | --- |
+| `lint` | `ruff check .` — style, imports, erreurs Python (E, F, W, I). Cache pip. |
+| `test` | `pytest` sur une **matrice** Python 3.11 / 3.12 / 3.13. Rapport JUnit en artefact. |
+| `CI OK` | Job sentinelle : il ne passe que si `lint` **et** tous les `test` de la matrice sont verts. |
+
+`concurrency` annule un run précédent sur la même branche dès qu'un nouveau push arrive.
+
+### Pourquoi la PR est verte mais bloquée
+
+Le ruleset exigeait les checks nommés `lint` et `test`. Avec la matrice, GitHub publie `test (3.11)`, `test (3.12)`, `test (3.13)` : le check `test` n'existe plus. Tout est vert, le merge reste bloqué.
+
+**CI OK** est le seul check obligatoire dans le ruleset : son nom ne change pas quand on ajoute une version Python. C'est lui qui agrège lint + matrice ; si un job est rouge, CI OK est rouge et le merge reste interdit.
+
+### Durée d'installation pip (cache)
+
+À noter dans l'onglet Actions, étape « Installer les dépendances » :
+
+| Run | Cache | Durée pip install |
 | --- | --- | --- |
-| `lint` | `ruff check .` | Style, imports inutiles et erreurs Python (règles E, F, W, I). |
-| `test` | `pytest` | Le comportement de l'API (santé, CRUD, recherche, suppression protégée). |
+| Premier run de `feat/ci-rapide` | miss | *(à coller depuis le log)* |
+| Run suivant (même branche) | hit | *(à coller depuis le log)* |
 
-Après le merge de `feat/ci`, le ruleset exige que ces deux checks soient **verts** pour fusionner dans `main`. Une PR qui casse un test reste bloquée.
+L'artefact `test-report-3.12` (et les autres versions) se télécharge depuis le run Actions → Artifacts.
 
 ### Capture de la PR bloquée
 
