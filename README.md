@@ -112,8 +112,10 @@ Le ruleset exigeait les checks nommés `lint` et `test`. Avec la matrice, GitHub
 
 | Run | Cache | Durée pip install |
 | --- | --- | --- |
-| Premier run de `feat/ci-rapide` | miss | *(à coller depuis le log)* |
-| Run suivant (même branche) | hit | *(à coller depuis le log)* |
+| Premier run (`test` 3.11, `Downloading …`) | miss | **6 s** |
+| Re-run (`test` 3.11, `Using cached …`) | hit | **3 s** |
+
+Le cache pip divise le temps d'installation par deux (6 s → 3 s) sur le même job.
 
 L'artefact `test-report-3.12` (et les autres versions) se télécharge depuis le run Actions → Artifacts.
 
