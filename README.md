@@ -65,4 +65,4 @@ docker run --rm -p 8000:8000 taskflow
 <!-- Lab J1 : listez les règles activées sur main, pourquoi chacune, et ajoutez la capture du push refusé -->
 À compléter.
 
-test. zdza
+test.
