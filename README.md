@@ -106,6 +106,10 @@ Le ruleset exigeait les checks nommés `lint` et `test`. Avec la matrice, GitHub
 
 **CI OK** est le seul check obligatoire dans le ruleset : son nom ne change pas quand on ajoute une version Python. C'est lui qui agrège lint + matrice ; si un job est rouge, CI OK est rouge et le merge reste interdit.
 
+![Seul le check CI OK est Required ; lint et la matrice sont verts](docs/pr-ci-ok-required.png)
+
+![Graphe Actions : lint et matrice test en parallèle, puis CI OK](docs/pipeline-ci-ok.png)
+
 ### Durée d'installation pip (cache)
 
 À noter dans l'onglet Actions, étape « Installer les dépendances » :
@@ -116,6 +120,14 @@ Le ruleset exigeait les checks nommés `lint` et `test`. Avec la matrice, GitHub
 | Re-run (`test` 3.11, `Using cached …`) | hit | **3 s** |
 
 Le cache pip divise le temps d'installation par deux (6 s → 3 s) sur le même job.
+
+**Sans cache** (téléchargements) :
+
+![pip install 6 s, cache miss](docs/pip-cache-miss.png)
+
+**Avec cache** (`Using cached …`) :
+
+![pip install 3 s, cache hit](docs/pip-cache-hit.png)
 
 L'artefact `test-report-3.12` (et les autres versions) se télécharge depuis le run Actions → Artifacts.
 
