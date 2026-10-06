@@ -1,0 +1,3 @@
+# Toute modification des workflows GitHub Actions exige une revue
+# des code owners (option « Require review from Code Owners »).
+/.github/workflows/ @KarimHaddadi20 @Amine92-cpu
